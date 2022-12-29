@@ -1,3 +1,3 @@
 # Tensorflow Object Detection Proof of concept
 
-![title](detection.png)
+![title](detection_1.png)
