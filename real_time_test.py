@@ -10,8 +10,9 @@ from object_detection.builders import model_builder
 from object_detection.utils import config_util
 from google.protobuf import text_format
 from matplotlib import pyplot as plt
-
-CUSTOM_MODEL_NAME = 'my_ssd_mobnet' 
+# my_ssd_mobnet_tuned
+# my_lite_640_ssd
+CUSTOM_MODEL_NAME = 'my_ssd_mobnet_tuned' 
 PRETRAINED_MODEL_NAME = 'ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8'
 PRETRAINED_MODEL_URL = 'http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8.tar.gz'
 TF_RECORD_SCRIPT_NAME = 'generate_tfrecord.py'
@@ -45,9 +46,9 @@ category_index = label_map_util.create_category_index_from_labelmap(files['LABEL
 configs = config_util.get_configs_from_pipeline_file(files['PIPELINE_CONFIG'])
 detection_model = model_builder.build(model_config=configs['model'], is_training=False)
 
-# Restore checkpoint
+# Restore checkpoint (latest model)
 ckpt = tf.compat.v2.train.Checkpoint(model=detection_model)
-ckpt.restore(os.path.join(paths['CHECKPOINT_PATH'], 'ckpt-3')).expect_partial()
+ckpt.restore(os.path.join(paths['CHECKPOINT_PATH'], 'ckpt-21')).expect_partial()
 
 @tf.function
 def detect_fn(image):
@@ -56,9 +57,9 @@ def detect_fn(image):
     detections = detection_model.postprocess(prediction_dict, shapes)
     return detections
 
+camera_cap = input("Please type the camera number you wish to use, 0 is first cam: \n")
 
-
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(int(camera_cap))
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
@@ -88,7 +89,7 @@ while cap.isOpened():
                 category_index,
                 use_normalized_coordinates=True,
                 max_boxes_to_draw=5,
-                min_score_thresh=.8,
+                min_score_thresh=.65 ,
                 agnostic_mode=False)
 
     cv2.imshow('object detection',  cv2.resize(image_np_with_detections, (800, 600)))
