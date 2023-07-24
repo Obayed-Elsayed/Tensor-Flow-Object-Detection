@@ -9,7 +9,7 @@ A total of 4000 images where orignially labelled. The data was then augmented wi
 After testing various models the *SSD MobileNet v2 320x320* from the tensor flow model zoo yielded the best results.
 
 # Proof of concept test
-![](detection_1.png)
+<img src="detection_1.png" width="480">
 
 # Results from the best model
 
